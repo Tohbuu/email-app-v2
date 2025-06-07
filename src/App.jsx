@@ -3,6 +3,7 @@ import EmailForm from './components/EmailForm';
 import { MatrixBackground } from './components/MatrixBackground';
 import { SnackbarProvider, useSnackbar } from './components/SnackbarProvider';
 import './App.css';
+import { motion } from 'framer-motion';
 
 const AppContent = () => {
   const { showSnackbar } = useSnackbar();
