@@ -1,32 +1,26 @@
 import { useState } from 'react';
+import { motion } from 'framer-motion';
 import EmailForm from './components/EmailForm';
 import { MatrixBackground } from './components/MatrixBackground';
-import { SnackbarProvider, useSnackbar } from './components/SnackbarProvider';
+import { SnackbarProvider } from './components/SnackbarProvider';
 import './App.css';
-import { motion } from 'framer-motion';
 
 const AppContent = () => {
-  const { showSnackbar } = useSnackbar();
   const [particleIntensity, setParticleIntensity] = useState(0.5);
   
   const handleSend = async (emailData) => {
     try {
       setParticleIntensity(1.5);
-      
-      const response = await fetch('http://localhost:3001/send-email', {
+      const response = await fetch('http://localhost:3001/api/send-email', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(emailData)
       });
       
-      if (response.ok) {
-        showSnackbar('Email sent successfully!', 'success');
-      } else {
-        throw new Error('Failed to send email');
-      }
+      if (!response.ok) throw new Error('Failed to send email');
+      setTimeout(() => setParticleIntensity(0.5), 2000);
     } catch (error) {
-      showSnackbar(error.message, 'error');
-    } finally {
+      console.error('Error:', error);
       setTimeout(() => setParticleIntensity(0.5), 2000);
     }
   };
@@ -37,9 +31,7 @@ const AppContent = () => {
       <div className="content-overlay">
         <motion.h1 
           className="animated-title"
-          animate={{
-            textShadow: `0 0 10px rgba(74, 107, 255, ${particleIntensity})`
-          }}
+          animate={{ textShadow: `0 0 10px rgba(74, 107, 255, ${particleIntensity})` }}
           transition={{ duration: 0.5 }}
         >
           Email Sender
@@ -50,12 +42,10 @@ const AppContent = () => {
   );
 };
 
-const App = () => {
-  return (
-    <SnackbarProvider>
-      <AppContent />
-    </SnackbarProvider>
-  );
-};
+const App = () => (
+  <SnackbarProvider>
+    <AppContent />
+  </SnackbarProvider>
+);
 
 export default App;
